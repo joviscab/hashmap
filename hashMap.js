@@ -1,12 +1,12 @@
 // HashMap class
 class HashMap {
   constructor() {
-    this.numBuckets = 16;
+    this.numBuckets = 12;
     this.buckets = Array(this.numBuckets)
       .fill(null)
       .map(() => []);
     this.size = 0;
-    this.loadFactor = 0.75; // Typical load factor threshold for resizing
+    this.loadFactor = 0.75;
   }
 
   // hash function
@@ -17,6 +17,13 @@ class HashMap {
       hashCode = primeNumber * hashCode + key.charCodeAt(i);
     }
     return Math.abs(hashCode) % this.numBuckets;
+  }
+
+  // Checks if the index is within bounds
+  checkIndex(index) {
+    if (index < 0 || index >= this.buckets.length) {
+      throw new Error("Trying to access index out of bound");
+    }
   }
 
   // set(key, value) method
@@ -58,7 +65,7 @@ class HashMap {
     }
   }
 
-  //Function get(key)
+  // get(key) method
   get(key) {
     const index = this.hash(key);
     const bucket = this.buckets[index];
@@ -70,20 +77,86 @@ class HashMap {
       }
     }
 
-    return null; // Key not found
+    return null;
   }
 
-  //Function has(key)
+  // has(key) method
+  has(key) {
+    const index = this.hash(key);
+    const bucket = this.buckets[index];
 
-  //Function remove(key)
+    for (let i = 0; i < bucket.length; i++) {
+      const [existingKey, _] = bucket[i];
+      if (existingKey === key) {
+        return true;
+      }
+    }
 
-  //Function length()
+    return false;
+  }
 
-  //Function clear()
+  // remove(key) method
+  remove(key) {
+    const index = this.hash(key);
+    const bucket = this.buckets[index];
 
-  //Function keys()
+    for (let i = 0; i < bucket.length; i++) {
+      const [existingKey, existingValue] = bucket[i];
+      if (existingKey === key) {
+        bucket.splice(i, 1);
+        this.size--;
+        return true;
+      }
+    }
 
-  //Function values()
+    return false;
+  }
 
-  //Function entries()
+  // length() method
+  length() {
+    return this.size;
+  }
+
+  // clear() method
+  clear() {
+    this.buckets = Array(this.numBuckets)
+      .fill(null)
+      .map(() => []);
+    this.size = 0;
+  }
+
+  // keys() method
+  keys() {
+    const keysArray = [];
+    for (const bucket of this.buckets) {
+      for (const [key, value] of bucket) {
+        keysArray.push(key);
+      }
+    }
+    return keysArray;
+  }
+
+  // values() method
+  values() {
+    const valuesArray = [];
+    for (const bucket of this.buckets) {
+      for (const [key, value] of bucket) {
+        valuesArray.push(value);
+      }
+    }
+    return valuesArray;
+  }
+
+  // entries() method
+  entries() {
+    const entriesArray = [];
+    for (const bucket of this.buckets) {
+      for (const [key, value] of bucket) {
+        entriesArray.push([key, value]);
+      }
+    }
+    return entriesArray;
+  }
 }
+
+export default HashMap;
